@@ -1,0 +1,61 @@
+name: Backend DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run Backend Linter
+        run: |
+          cd backend
+          npx eslint . --ext .js --max-warnings=0
+
+      - name: Run Backend Unit Tests with Coverage
+        run: |
+          cd backend
+          npm test -- --coverage
+        env:
+          MONGO_URI_TEST: ${{ secrets.MONGO_URI_TEST }}
+
+      - name: Save Backend Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/
+
+      - name: Run Backend Security Audit
+        run: |
+          cd backend
+          npm audit --audit-level=moderate
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e
+        with:
+          args: >
+            -Dsonar.organization=sandeep-hari
+            -Dsonar.projectKey=Sandeep-Hari_int-payments-app
+            -Dsonar.sources=backend
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}

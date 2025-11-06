@@ -1,0 +1,27 @@
+# ===== Node dependencies =====
+node_modules/
+.pnp
+.pnp.js
+
+# ===== Production build =====
+/build
+
+# ===== Environment files =====
+# Backend sensitive
+/backend/.env
+/backend/.env.test
+# Frontend .env is safe to push, so not ignored
+
+# ===== Logs =====
+npm-debug.log*
+yarn-debug.log*
+
+# ===== OS files =====
+.DS_Store
+
+# ===== Keys =====
+/backend/keys/
+
+# Ignore batch files
+*bat
+
