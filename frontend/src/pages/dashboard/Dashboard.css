@@ -470,3 +470,40 @@
     padding: 20px;
   }
 }
+/* === PAYMENT STATUS BADGES === */
+.badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.badge-pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.badge-verified {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-submitted {
+  background: #dcfce7;
+  color: #15803d;
+}
+.swift-banner {
+  background: #1a237e;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: 600;
+  animation: slideDown 0.5s ease forwards;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

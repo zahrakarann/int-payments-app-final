@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "seed:users": "node seed/seedUsers.js",
+    "seed:payments": "node seed/seedPayments.js",
     "lint": "eslint .",
     "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watchAll"

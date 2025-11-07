@@ -70,4 +70,9 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
+// Test route to verify API + HTTPS connection
+router.get("/test", (req, res) => {
+  res.json({ message: "Auth API is reachable ✅" });
+});
+
 module.exports = router;

@@ -1,54 +1,57 @@
 const express = require('express');
+const auth = require('../middleware/auth');
+const requireRole = require('../middleware/requireRole');
 const Payment = require('../models/Payment');
-const auth = require('../middleware/auth'); // your working auth middleware
 
 const router = express.Router();
 
-// GET payments: both admin and staff see all, populate user info
+// ✅ Get payments for logged-in user OR all payments if admin
 router.get('/', auth, async (req, res) => {
   try {
-    const payments = await Payment.find({})
-      .populate('userId', 'username role fullName accountNumber');
+    let payments;
+
+    if (req.user.role === 'admin') {
+      payments = await Payment.find().populate('userId', 'username fullName');
+    } else {
+      payments = await Payment.find({ userId: req.user.id });
+    }
+
     res.json(payments);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// POST /:id/verify - admin only
-router.post('/:id/verify', auth, async (req, res) => {
+// ✅ Admin Approves Payment
+router.patch('/:id/approve', auth, requireRole('admin'), async (req, res) => {
   try {
-    if (req.user.role !== 'admin') 
-      return res.status(403).json({ message: 'Forbidden' });
-
-    const payment = await Payment.findById(req.params.id);
-    if (!payment) return res.status(404).json({ message: 'Payment not found' });
-
-    payment.status = 'Verified';
-    await payment.save();
-
-    res.json({ message: 'Payment verified', payment });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// POST /submit - submit all verified payments (admin only)
-router.post('/submit', auth, async (req, res) => {
-  try {
-    if (req.user.role !== 'admin') 
-      return res.status(403).json({ message: 'Forbidden' });
-
-    const updated = await Payment.updateMany(
-      { status: 'Verified' },
-      { $set: { status: 'Submitted' } }
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'Approved' },
+      { new: true }
     );
 
-    res.json({ message: `${updated.modifiedCount} payments submitted` });
+    if (!payment) return res.status(404).json({ message: 'Payment not found' });
+
+    res.json({ message: 'Payment Approved ✅', payment });
   } catch (err) {
-    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ✅ Admin Declines Payment
+router.patch('/:id/decline', auth, requireRole('admin'), async (req, res) => {
+  try {
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'Declined' },
+      { new: true }
+    );
+
+    if (!payment) return res.status(404).json({ message: 'Payment not found' });
+
+    res.json({ message: 'Payment Declined ❌', payment });
+  } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
 });

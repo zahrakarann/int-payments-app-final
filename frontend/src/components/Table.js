@@ -1,13 +1,28 @@
 import React from 'react';
 import './Component.css';
 
-const Table = ({ 
-  columns, 
-  data, 
+const getStatusBadge = (status) => {
+  if (!status) return status;
+
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return <span className="badge badge-pending">Pending</span>;
+    case 'verified':
+      return <span className="badge badge-verified">Verified</span>;
+    case 'submitted':
+      return <span className="badge badge-submitted">Submitted</span>;
+    default:
+      return <span className="badge">{status}</span>;
+  }
+};
+
+const Table = ({
+  columns,
+  data,
   loading = false,
   emptyMessage = "No data available",
   onRowClick,
-  className = '' 
+  className = ''
 }) => {
   const tableClass = `table-container ${className}`;
 
@@ -60,14 +75,19 @@ const Table = ({
             </tr>
           ) : (
             data.map((row, idx) => (
-              <tr 
-                key={idx} 
+              <tr
+                key={idx}
                 onClick={() => onRowClick && onRowClick(row)}
                 className={onRowClick ? 'clickable-row' : ''}
               >
-                {columns.map((col, i) => (
-                  <td key={i}>{row[col.toLowerCase()] || row[col]}</td>
-                ))}
+                {columns.map((col, i) => {
+                  const cellValue = row[col.toLowerCase()];
+                  
+                  // Handle status
+                  if (col.toLowerCase() === 'status') return <td key={i}>{getStatusBadge(cellValue)}</td>;
+
+                  return <td key={i}>{cellValue}</td>;
+                })}
               </tr>
             ))
           )}

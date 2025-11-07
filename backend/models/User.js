@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   idNumber: { type: String, required: true },
   username: { type: String, required: true, unique: true },
   accountNumber: { type: String, required: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true }, // this is the hashed password
   role: { type: String, enum: ['admin', 'employee'], default: 'employee' }
 }, { timestamps: true });
 
