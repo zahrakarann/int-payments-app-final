@@ -11,7 +11,10 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'test') {
+  require('dotenv').config();
+}
+
 
 const app = express();
 

@@ -3,5 +3,7 @@ module.exports = {
   verbose: true,
   testMatch: ["**/tests/**/*.test.js"],
   forceExit: true,
-  detectOpenHandles: true
+  detectOpenHandles: true,
+  setupFilesAfterEnv: ['./tests/setup.js']
 };
+

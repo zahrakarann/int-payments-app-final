@@ -20,9 +20,9 @@ describe('Auth Endpoints', () => {
       .post('/api/auth/login')
       .send({ username: 'wronguser', accountNumber: '1234567890', password: 'wrongpass' });
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(401);
     expect(res.body).toHaveProperty('message');
   });
 
-  // You can add real seeded users from your test DB here
+
 });
